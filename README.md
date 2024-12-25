@@ -91,7 +91,6 @@ sudo apt install -y mongodb-mongosh
      "middle_gear_ratio": 3,
      "middle_battery_percentage": 100,
      "middle_battery_temperature": 47.51,
-     "middle_motor_rpm": 2000,
      "middle_motor_speed_setting": 0,
      "bottom_button_gear": true,
      "bottom_button_motor": false,

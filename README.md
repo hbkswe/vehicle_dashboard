@@ -167,8 +167,8 @@ This project is hosted on AWS using the instructions provided by Node-RED. Follo
   - Naturally cools when inactive.
 
 ## Submission Details
-- Hosted Application: [[Static URL Placeholder]](http://35.183.40.111:1880/ui) static IP may change after EC2 restarts
-- GitHub Repository: [[GitHub Repository Placeholder]](https://github.com/hbkswe/vehicle_dashboard)
+- Hosted Application: [[Static URL Placeholder]](http://35.183.40.111:1880/ui) static IP may change due to EC2 AWS public IP rotation
+- GitHub Repository: [[GitHub Repository Placeholder]](https://github.com/hbkswe/vehicle_dashboard_node_red_mongodb_aws)
 - Public Database: MongoDB read-only access link [Database URL Placeholder]
 
 ## Additional Notes

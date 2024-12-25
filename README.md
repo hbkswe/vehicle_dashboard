@@ -105,6 +105,15 @@ sudo apt install -y mongodb-mongosh
    db.dashboard_data.find();
    ```
 
+#### 6. MongoDB Compass Installation for Public Database Access
+To view the public database in read-only mode, use [MongoDB Compass](https://www.mongodb.com/products/compass):
+1. Download and install MongoDB Compass.
+2. Launch Compass and connect to the public database using the connection string:
+   ```
+   mongodb://readonlyUser:Epiroc_Henry_2024@35.183.40.111:27017/vehicle_dashboard
+   ```
+3. Explore the `vehicle_dashboard` database and its collections.
+
 ### Setting Up Node-RED
 1. Start Node-RED:
    ```bash
@@ -150,7 +159,7 @@ This project is hosted on AWS using the instructions provided by Node-RED. Follo
 ### Running the Application
 1. Ensure MongoDB is running and populated with initial data.
 2. Start Node-RED and deploy the flows.
-3. Open the dashboard in your browser at `http://your-ec2-public-ip:1880/ui` (or locally at `http://localhost:1880/ui`).
+3. Open the dashboard in your browser at `http://35.183.40.111:1880/ui` (or locally at `http://localhost:1880/ui`). Please note that the public IP may change due to AWS policy.
 4. Interact with the dashboard:
    - Adjust motor speed using the slider.
    - Toggle the charging button.
@@ -169,7 +178,7 @@ This project is hosted on AWS using the instructions provided by Node-RED. Follo
 ## Submission Details
 - Hosted Application: [[Static URL Placeholder]](http://35.183.40.111:1880/ui) static IP may change due to EC2 AWS public IP rotation
 - GitHub Repository: [[GitHub Repository Placeholder]](https://github.com/hbkswe/vehicle_dashboard_node_red_mongodb_aws)
-- Public Database: MongoDB read-only access link [Database URL Placeholder]
+- Public Database: Reference MongoDB Compass section above for connection details.
 
 ## Additional Notes
 - Documented code with meaningful comments.

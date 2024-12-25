@@ -1,0 +1,1045 @@
+[
+    {
+        "id": "fbac35c71438fe4d",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "17ae70419ea872e1",
+        "type": "function",
+        "z": "fbac35c71438fe4d",
+        "name": "extract top parking indicator",
+        "func": "msg.payload = msg.payload[0];\nif (msg.payload.top_indicator_parking_brake === \"red\")\n{\n    msg.background = \"red\";\n}\nelse\n{\n    msg.background = \"gray\";\n}\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1300,
+        "y": 140,
+        "wires": [
+            [
+                "baa4437bb52cdacb",
+                "8e176a03afc8c605"
+            ]
+        ]
+    },
+    {
+        "id": "baa4437bb52cdacb",
+        "type": "debug",
+        "z": "fbac35c71438fe4d",
+        "name": "check history",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "background",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1530,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "8834107a3106fea3",
+        "type": "function",
+        "z": "fbac35c71438fe4d",
+        "name": "extract top engine status",
+        "func": "msg.payload = msg.payload[0];\nif (msg.payload.top_indicator_check_engine === \"red\")\n{\n    msg.background = \"red\";\n}\nelse\n{\n    msg.background = \"gray\";\n}\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1290,
+        "y": 180,
+        "wires": [
+            [
+                "4b1b78d8fd66d53a"
+            ]
+        ]
+    },
+    {
+        "id": "1397c7e8d013f5ab",
+        "type": "function",
+        "z": "fbac35c71438fe4d",
+        "name": "detect change",
+        "func": "// Retrieve the previous data from flow context (if it exists)\nvar previousData = flow.get('previousData') || {};  // Default to empty object if not found\n\n// Get the current data from the incoming message\nvar currentData = msg.payload;\n\n// Compare previous and current data\nif (JSON.stringify(previousData) !== JSON.stringify(currentData)) {\n    // If the data is different, store the new data in flow context\n    flow.set('previousData', currentData);\n    \n    // Pass the current data to the next node\n    msg.payload = currentData;\n    return msg;  // Forward the message with updated data\n} else {\n    // If the data has not changed, return null to stop further processing\n    return null;\n}\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "// Code added here will be run once\n// whenever the node is started.\nreturn msg;",
+        "libs": [],
+        "x": 900,
+        "y": 320,
+        "wires": [
+            [
+                "8834107a3106fea3",
+                "17ae70419ea872e1",
+                "e092400fcae9e09d",
+                "4c97226fed3c2f2d",
+                "f7b1e5c7d58e6fcb",
+                "d312602b2794960a",
+                "270e2df171e1fce7",
+                "1fc9bf9d5e0c1af4",
+                "38e203730dc7033c",
+                "45cd3b2ea2cb3001",
+                "1d031d719e26b1dd"
+            ]
+        ]
+    },
+    {
+        "id": "ebf9b6ac44f35a0a",
+        "type": "inject",
+        "z": "fbac35c71438fe4d",
+        "name": "Interval",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "0.5",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "5",
+        "topic": "",
+        "payload": "100",
+        "payloadType": "str",
+        "x": 520,
+        "y": 700,
+        "wires": [
+            [
+                "e736ea42a2ec3dbd"
+            ]
+        ]
+    },
+    {
+        "id": "7f943a7bb6ee6cd7",
+        "type": "debug",
+        "z": "fbac35c71438fe4d",
+        "name": "mongo db payload",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 910,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "1d031d719e26b1dd",
+        "type": "function",
+        "z": "fbac35c71438fe4d",
+        "name": "low batterry",
+        "func": "msg.payload = msg.payload[0];\nif (msg.payload.middle_battery_percentage <= 20) {\n    msg.background = \"red\";\n}\nelse {\n    msg.background = \"gray\";\n}\nmsg.payload = msg.payload.middle_battery_percentage;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1250,
+        "y": 260,
+        "wires": [
+            [
+                "a9f450a60ef0986a"
+            ]
+        ]
+    },
+    {
+        "id": "e092400fcae9e09d",
+        "type": "function",
+        "z": "fbac35c71438fe4d",
+        "name": "extract middle gear ratio",
+        "func": "msg.payload = msg.payload[0].middle_gear_ratio;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1290,
+        "y": 480,
+        "wires": [
+            [
+                "c0d3428647d3a6e9"
+            ]
+        ]
+    },
+    {
+        "id": "4c97226fed3c2f2d",
+        "type": "function",
+        "z": "fbac35c71438fe4d",
+        "name": "extract battery remain",
+        "func": "msg.payload = msg.payload[0].middle_battery_percentage;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1280,
+        "y": 520,
+        "wires": [
+            [
+                "a232e14e4f8571c2"
+            ]
+        ]
+    },
+    {
+        "id": "f7b1e5c7d58e6fcb",
+        "type": "function",
+        "z": "fbac35c71438fe4d",
+        "name": "extract battery temp",
+        "func": "msg.payload = msg.payload[0];\nif (msg.payload.middle_battery_temperature >= 85) {\n    msg.background = \"red\";\n}\nelse {\n    msg.background = \"gray\";\n}\nmsg.payload = msg.payload.middle_battery_temperature;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1280,
+        "y": 560,
+        "wires": [
+            [
+                "e00c9bec1b203f52"
+            ]
+        ]
+    },
+    {
+        "id": "b4deafee2a570eaa",
+        "type": "function",
+        "z": "fbac35c71438fe4d",
+        "name": "toggle charge status in DB",
+        "func": "msg.query = { _id: \"vehicle_001\" };  // Specify the target document\n\n// Retrieve the current state from the global or flow context\nlet toggleState = flow.get(\"buttonToggleState\") || false;\n\n// Flip the toggle state\ntoggleState = !toggleState;\n\n// Save the new state back to the context\nflow.set(\"buttonToggleState\", toggleState);\n\nmsg.payload = {\n    $set: {\n        bottom_button_charging: toggleState ? true : false\n    }\n};\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1740,
+        "y": 1020,
+        "wires": [
+            [
+                "5e7ba481fcc29b0b",
+                "5fe6387dc22d0702"
+            ]
+        ]
+    },
+    {
+        "id": "d312602b2794960a",
+        "type": "function",
+        "z": "fbac35c71438fe4d",
+        "name": "extract charging status",
+        "func": "msg.payload = msg.payload[0];\nif (msg.payload.bottom_button_charging === true)\n{\n    msg.background = \"green\";\n}\nelse\n{\n    msg.background = \"gray\";\n}\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1280,
+        "y": 1020,
+        "wires": [
+            [
+                "553f8a389bcb0db6"
+            ]
+        ]
+    },
+    {
+        "id": "5fe6387dc22d0702",
+        "type": "debug",
+        "z": "fbac35c71438fe4d",
+        "name": "check history",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2010,
+        "y": 960,
+        "wires": []
+    },
+    {
+        "id": "c92ac90a4ad1431d",
+        "type": "function",
+        "z": "fbac35c71438fe4d",
+        "name": "extract charging status",
+        "func": "if (msg.payload && Array.isArray(msg.payload) && msg.payload[0]) {\n    msg.chargingStatus = msg.payload[0].bottom_button_charging;\n    msg.batteryPercentage = msg.payload[0].middle_battery_percentage;\n    return msg;\n}\n\nreturn null;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1280,
+        "y": 1060,
+        "wires": [
+            [
+                "7a9561171a3be642"
+            ]
+        ]
+    },
+    {
+        "id": "7a9561171a3be642",
+        "type": "function",
+        "z": "fbac35c71438fe4d",
+        "name": "update battery %",
+        "func": "if (msg.chargingStatus === true && msg.batteryPercentage !== undefined) {\n    // Ensure batteryPercentage is a valid number, defaulting to 0 if null or invalid\n    let batteryPercentage = (typeof msg.batteryPercentage === 'number' && !isNaN(msg.batteryPercentage)) ? msg.batteryPercentage : 0;\n\n    // Increase the battery percentage by 0.1, but cap it at 100\n    batteryPercentage = batteryPercentage + 0.4;\n    batteryPercentage = batteryPercentage > 100 ? 100 : batteryPercentage;\n\n    // Round to 1 decimal place\n    batteryPercentage = parseFloat(batteryPercentage.toFixed(1));\n\n    msg.query = { _id: \"vehicle_001\" };\n    msg.payload = {\n        $set: {\n            gauge_power: batteryPercentage == 100? 0: -250,\n            middle_battery_percentage: batteryPercentage  // Ensure valid number is used\n        }\n    };\n    return msg;\n}\n// else {\n//     msg.query = { _id: \"vehicle_001\" };\n//     msg.payload = {\n//         $set: {\n//             gauge_power: 0        \n//         }\n//     };\n\n//     return msg;\n// }\n\nreturn null;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1270,
+        "y": 1100,
+        "wires": [
+            [
+                "2abee50049dbdb19"
+            ]
+        ]
+    },
+    {
+        "id": "1cbda0eeace0c728",
+        "type": "function",
+        "z": "fbac35c71438fe4d",
+        "name": "extract motor speed status",
+        "func": "msg.motorSpeed = msg.payload;\nreturn msg;\n\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1780,
+        "y": 700,
+        "wires": [
+            [
+                "79530b7d284231af"
+            ]
+        ]
+    },
+    {
+        "id": "79530b7d284231af",
+        "type": "function",
+        "z": "fbac35c71438fe4d",
+        "name": "update motor speed to db",
+        "func": "if (msg.motorSpeed !== undefined) {\n    msg.query = { _id: \"vehicle_001\" };\n    msg.payload = {\n        $set: {\n            middle_motor_speed_setting: msg.motorSpeed,\n            gauge_power: msg.motorSpeed*250,\n            gauge_motor_rpm: msg.motorSpeed * 200\n        }\n    };\n\n    return msg;\n}\n\nreturn null;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1770,
+        "y": 740,
+        "wires": [
+            [
+                "27d57136267509fe"
+            ]
+        ]
+    },
+    {
+        "id": "6907d4b3dcc7b6a8",
+        "type": "function",
+        "z": "fbac35c71438fe4d",
+        "name": "extract motor speed status",
+        "func": "if (msg.payload && Array.isArray(msg.payload) && msg.payload[0]) {\n    msg.motorStatus = msg.payload[0].middle_motor_speed_setting;\n    msg.batteryPercentage = msg.payload[0].middle_battery_percentage;\n    msg.batteryTemp = msg.payload[0].middle_battery_temperature;\n    return msg;\n}\n\nreturn null;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1300,
+        "y": 1240,
+        "wires": [
+            [
+                "36e82e6e1e5a27bf"
+            ]
+        ]
+    },
+    {
+        "id": "36e82e6e1e5a27bf",
+        "type": "function",
+        "z": "fbac35c71438fe4d",
+        "name": "update battery %",
+        "func": "if (msg.motorStatus && msg.motorStatus > 0) {\n    // Ensure batteryPercentage is a valid number, defaulting to 0 if null or invalid\n    let batteryPercentage = (typeof msg.batteryPercentage === 'number' && !isNaN(msg.batteryPercentage)) ? msg.batteryPercentage : 0;\n\n    batteryPercentage = batteryPercentage - msg.motorStatus*0.1;\n    batteryPercentage = batteryPercentage < 0 ? 0 : batteryPercentage;\n    batteryPercentage = parseFloat(batteryPercentage.toFixed(1));\n \n\n    let batTemp = (typeof msg.batteryTemp === 'number' && !isNaN(msg.batteryTemp)) ? msg.batteryTemp : 0;\n    batTemp = batTemp + msg.motorStatus * 0.2;\n    batTemp = parseFloat(batTemp.toFixed(1));\n\n    msg.query = { _id: \"vehicle_001\" };\n    msg.payload = {\n        $set: {\n            middle_battery_percentage: batteryPercentage,\n            middle_battery_temperature: batTemp\n        }\n    };\n\n    return msg;\n}\nelse if (msg.batteryTemp > 25) {\n    let batTemp = (typeof msg.batteryTemp === 'number' && !isNaN(msg.batteryTemp)) ? msg.batteryTemp : 0;\n    batTemp = batTemp - 0.07;\n    batTemp = parseFloat(batTemp.toFixed(2));\n\n    msg.query = { _id: \"vehicle_001\" };\n    msg.payload = {\n        $set: {\n            middle_battery_temperature: batTemp < 25 ? 25 : batTemp\n        }\n    };\n\n    return msg;   \n}\n\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1270,
+        "y": 1280,
+        "wires": [
+            [
+                "7eb9bed8ec39e694"
+            ]
+        ]
+    },
+    {
+        "id": "270e2df171e1fce7",
+        "type": "function",
+        "z": "fbac35c71438fe4d",
+        "name": "extract motor speed",
+        "func": "\nif (msg.payload && Array.isArray(msg.payload) && msg.payload[0]) {\n    let isCharging = msg.payload[0].bottom_button_charging;\n    let batteryPercentage = msg.payload[0].middle_battery_percentage;\n    msg.payload = (batteryPercentage === 0 || isCharging === true) ? 0 : msg.payload[0].middle_motor_speed_setting;\n    return msg;\n}\n\nreturn null;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1280,
+        "y": 700,
+        "wires": [
+            [
+                "80734ebd01a9c0e8"
+            ]
+        ]
+    },
+    {
+        "id": "1fc9bf9d5e0c1af4",
+        "type": "function",
+        "z": "fbac35c71438fe4d",
+        "name": "extract motor speed detect high speed",
+        "func": "msg.payload = msg.payload[0];\nif (msg.payload.middle_motor_speed_setting >= 3) {\n    msg.background = \"red\";\n}\nelse {\n    msg.background = \"gray\";\n}\nmsg.payload = msg.payload.middle_motor_speed_setting;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1330,
+        "y": 220,
+        "wires": [
+            [
+                "a9aaded223fd2e52"
+            ]
+        ]
+    },
+    {
+        "id": "38e203730dc7033c",
+        "type": "function",
+        "z": "fbac35c71438fe4d",
+        "name": "extract power gauge",
+        "func": "msg.payload = msg.payload[0].gauge_power;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1280,
+        "y": 300,
+        "wires": [
+            [
+                "6c611544abbef039"
+            ]
+        ]
+    },
+    {
+        "id": "45cd3b2ea2cb3001",
+        "type": "function",
+        "z": "fbac35c71438fe4d",
+        "name": "extract RPM",
+        "func": "msg.payload = msg.payload[0].gauge_motor_rpm;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1250,
+        "y": 340,
+        "wires": [
+            [
+                "9b331896f59727c7",
+                "d4f5dbcc2f9f801b"
+            ]
+        ]
+    },
+    {
+        "id": "c66361103a02fe70",
+        "type": "ui_button",
+        "z": "fbac35c71438fe4d",
+        "name": "Menu",
+        "group": "2f3d5f09892a6508",
+        "order": 17,
+        "width": 1,
+        "height": 1,
+        "passthru": false,
+        "label": "",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "gray",
+        "className": "",
+        "icon": "fa-bars",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 1630,
+        "y": 1360,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "553f8a389bcb0db6",
+        "type": "ui_button",
+        "z": "fbac35c71438fe4d",
+        "name": "Charging",
+        "group": "2f3d5f09892a6508",
+        "order": 19,
+        "width": 1,
+        "height": 1,
+        "passthru": false,
+        "label": "",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "{{msg.background}}",
+        "className": "",
+        "icon": "fa-plug",
+        "payload": "-250",
+        "payloadType": "num",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 1520,
+        "y": 1020,
+        "wires": [
+            [
+                "b4deafee2a570eaa"
+            ]
+        ]
+    },
+    {
+        "id": "8e176a03afc8c605",
+        "type": "ui_button",
+        "z": "fbac35c71438fe4d",
+        "name": "top-parking",
+        "group": "2f3d5f09892a6508",
+        "order": 1,
+        "width": 1,
+        "height": 1,
+        "passthru": false,
+        "label": "",
+        "tooltip": "",
+        "color": "{{msg.colour}}",
+        "bgcolor": "{{msg.background}}",
+        "className": "",
+        "icon": "local_parking",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 1650,
+        "y": 140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "4b1b78d8fd66d53a",
+        "type": "ui_button",
+        "z": "fbac35c71438fe4d",
+        "name": "top-engine-status",
+        "group": "2f3d5f09892a6508",
+        "order": 2,
+        "width": 1,
+        "height": 1,
+        "passthru": false,
+        "label": "",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "{{msg.background}}",
+        "className": "",
+        "icon": "fa-cogs",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 1670,
+        "y": 180,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a9aaded223fd2e52",
+        "type": "ui_button",
+        "z": "fbac35c71438fe4d",
+        "name": "top-motor-highlevel",
+        "group": "2f3d5f09892a6508",
+        "order": 3,
+        "width": 1,
+        "height": 1,
+        "passthru": false,
+        "label": "",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "{{msg.background}}",
+        "className": "",
+        "icon": "autorenew",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 1670,
+        "y": 220,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a9f450a60ef0986a",
+        "type": "ui_button",
+        "z": "fbac35c71438fe4d",
+        "name": "top-batterry-low",
+        "group": "2f3d5f09892a6508",
+        "order": 4,
+        "width": 1,
+        "height": 1,
+        "passthru": false,
+        "label": "",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "{{msg.background}}",
+        "className": "",
+        "icon": "battery_20",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 1660,
+        "y": 260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c0d3428647d3a6e9",
+        "type": "ui_button",
+        "z": "fbac35c71438fe4d",
+        "name": "middle-gear-ratio",
+        "group": "2f3d5f09892a6508",
+        "order": 8,
+        "width": 2,
+        "height": 1,
+        "passthru": false,
+        "label": "{{msg.payload}}",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "gray",
+        "className": "",
+        "icon": "fa-cogs",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 1670,
+        "y": 480,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a232e14e4f8571c2",
+        "type": "ui_button",
+        "z": "fbac35c71438fe4d",
+        "name": "middle-battery-remain",
+        "group": "2f3d5f09892a6508",
+        "order": 9,
+        "width": 2,
+        "height": 1,
+        "passthru": false,
+        "label": "{{msg.payload}}",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "gray",
+        "className": "",
+        "icon": "battery_50",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 1680,
+        "y": 520,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e00c9bec1b203f52",
+        "type": "ui_button",
+        "z": "fbac35c71438fe4d",
+        "name": "middle-battery-temp",
+        "group": "2f3d5f09892a6508",
+        "order": 10,
+        "width": 2,
+        "height": 1,
+        "passthru": false,
+        "label": "{{msg.payload}}",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "{{msg.background}}",
+        "className": "",
+        "icon": "fa-thermometer-full",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 1680,
+        "y": 560,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d4f5dbcc2f9f801b",
+        "type": "ui_button",
+        "z": "fbac35c71438fe4d",
+        "name": "middle-motor-rpm",
+        "group": "2f3d5f09892a6508",
+        "order": 11,
+        "width": 2,
+        "height": 1,
+        "passthru": false,
+        "label": "{{msg.payload}}",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "gray",
+        "className": "",
+        "icon": "autorenew",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 1670,
+        "y": 380,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "430962ecf0d8fbff",
+        "type": "ui_button",
+        "z": "fbac35c71438fe4d",
+        "name": "bottom-gear-ratio",
+        "group": "2f3d5f09892a6508",
+        "order": 13,
+        "width": 1,
+        "height": 1,
+        "passthru": false,
+        "label": "",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "gray",
+        "className": "",
+        "icon": "fa-cogs",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 1670,
+        "y": 1240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e6af429eb828fa64",
+        "type": "ui_button",
+        "z": "fbac35c71438fe4d",
+        "name": "bottom-motor-rpm",
+        "group": "2f3d5f09892a6508",
+        "order": 14,
+        "width": 1,
+        "height": 1,
+        "passthru": false,
+        "label": "",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "gray",
+        "className": "",
+        "icon": "autorenew",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 1670,
+        "y": 1280,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "818a566976f1f2d0",
+        "type": "ui_button",
+        "z": "fbac35c71438fe4d",
+        "name": "bottom-battery-temp",
+        "group": "2f3d5f09892a6508",
+        "order": 15,
+        "width": 1,
+        "height": 1,
+        "passthru": false,
+        "label": "",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "gray",
+        "className": "",
+        "icon": "fa-thermometer-full",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 1680,
+        "y": 1320,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "80734ebd01a9c0e8",
+        "type": "ui_slider",
+        "z": "fbac35c71438fe4d",
+        "name": "",
+        "label": "Motor Speeding",
+        "tooltip": "",
+        "group": "2f3d5f09892a6508",
+        "order": 12,
+        "width": 6,
+        "height": 1,
+        "passthru": true,
+        "outs": "all",
+        "topic": "topic",
+        "topicType": "msg",
+        "min": 0,
+        "max": "4",
+        "step": 1,
+        "className": "",
+        "x": 1540,
+        "y": 700,
+        "wires": [
+            [
+                "1cbda0eeace0c728"
+            ]
+        ]
+    },
+    {
+        "id": "6c611544abbef039",
+        "type": "ui_gauge",
+        "z": "fbac35c71438fe4d",
+        "name": "",
+        "group": "2f3d5f09892a6508",
+        "order": 6,
+        "width": 7,
+        "height": 7,
+        "gtype": "gage",
+        "title": "Power (kW)",
+        "label": "units",
+        "format": "{{value}}",
+        "min": "-1000",
+        "max": "1000",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 1650,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "9b331896f59727c7",
+        "type": "ui_gauge",
+        "z": "fbac35c71438fe4d",
+        "name": "",
+        "group": "2f3d5f09892a6508",
+        "order": 7,
+        "width": 7,
+        "height": 7,
+        "gtype": "gage",
+        "title": "RPM",
+        "label": "units",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "800",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "diff": false,
+        "className": "",
+        "x": 1630,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "5e7ba481fcc29b0b",
+        "type": "mongodb out",
+        "z": "fbac35c71438fe4d",
+        "mongodb": "623997ce03b885ee",
+        "name": "update DB",
+        "collection": "vehicle_data",
+        "payonly": false,
+        "upsert": false,
+        "multi": false,
+        "operation": "update",
+        "x": 2010,
+        "y": 1020,
+        "wires": []
+    },
+    {
+        "id": "2abee50049dbdb19",
+        "type": "mongodb out",
+        "z": "fbac35c71438fe4d",
+        "mongodb": "623997ce03b885ee",
+        "name": "update DB",
+        "collection": "vehicle_data",
+        "payonly": false,
+        "upsert": false,
+        "multi": false,
+        "operation": "update",
+        "x": 1250,
+        "y": 1140,
+        "wires": []
+    },
+    {
+        "id": "27d57136267509fe",
+        "type": "mongodb out",
+        "z": "fbac35c71438fe4d",
+        "mongodb": "623997ce03b885ee",
+        "name": "update DB",
+        "collection": "vehicle_data",
+        "payonly": false,
+        "upsert": false,
+        "multi": false,
+        "operation": "update",
+        "x": 1730,
+        "y": 780,
+        "wires": []
+    },
+    {
+        "id": "7eb9bed8ec39e694",
+        "type": "mongodb out",
+        "z": "fbac35c71438fe4d",
+        "mongodb": "623997ce03b885ee",
+        "name": "update DB",
+        "collection": "vehicle_data",
+        "payonly": false,
+        "upsert": false,
+        "multi": false,
+        "operation": "update",
+        "x": 1250,
+        "y": 1320,
+        "wires": []
+    },
+    {
+        "id": "e736ea42a2ec3dbd",
+        "type": "mongodb in",
+        "z": "fbac35c71438fe4d",
+        "mongodb": "623997ce03b885ee",
+        "name": "MongoDB",
+        "collection": "vehicle_data",
+        "operation": "find",
+        "x": 700,
+        "y": 700,
+        "wires": [
+            [
+                "7f943a7bb6ee6cd7",
+                "1397c7e8d013f5ab",
+                "c92ac90a4ad1431d",
+                "6907d4b3dcc7b6a8"
+            ]
+        ]
+    },
+    {
+        "id": "c1af472706367d91",
+        "type": "ui_spacer",
+        "z": "fbac35c71438fe4d",
+        "name": "spacer",
+        "group": "2f3d5f09892a6508",
+        "order": 5,
+        "width": 10,
+        "height": 1
+    },
+    {
+        "id": "091833997ad94759",
+        "type": "ui_spacer",
+        "z": "fbac35c71438fe4d",
+        "name": "spacer",
+        "group": "2f3d5f09892a6508",
+        "order": 16,
+        "width": 3,
+        "height": 1
+    },
+    {
+        "id": "ec070532b778fd8f",
+        "type": "ui_spacer",
+        "z": "fbac35c71438fe4d",
+        "name": "spacer",
+        "group": "2f3d5f09892a6508",
+        "order": 18,
+        "width": 6,
+        "height": 1
+    },
+    {
+        "id": "2f3d5f09892a6508",
+        "type": "ui_group",
+        "name": "All Rows",
+        "tab": "34c19325f75e6b61",
+        "order": 1,
+        "disp": true,
+        "width": 14,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "623997ce03b885ee",
+        "type": "mongodb",
+        "hostname": "127.0.0.1",
+        "topology": "direct",
+        "connectOptions": "",
+        "port": 27017,
+        "db": "vehicle_dashboard",
+        "name": "MongoDB Fetch"
+    },
+    {
+        "id": "34c19325f75e6b61",
+        "type": "ui_tab",
+        "name": "Vehicle Dashboard",
+        "icon": "dashboard",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    }
+]
